@@ -1,0 +1,110 @@
+﻿@using System.Data;
+@{
+    ViewData["Title"] = "Branch List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataTable dt = ViewData["Table"] as DataTable;
+}
+
+@model MyProject.Areas.Branch.Models.LOC_BranchModel
+
+<div class="card">
+    <div class="card-header">
+        <h3>
+            Branch List
+        </h3>
+    </div>
+    <div class="card-body">
+        <form asp-area="Branch" asp-controller="MST_Branch" asp-action="Index" method="post">
+            <h6>
+                Apply Filter
+            </h6>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="text-muted fw-bold" for="BranchName">Branch Name</label>
+                        <input asp-for="BranchName" placeholder="Enter Branch Name" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="text-muted fw-bold" for="BranchCode">Branch Code</label>
+                        <input asp-for="BranchCode" placeholder="Enter Branch Code" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group pt-2">
+                        <button name="submit" type="submit" class="btn btn-primary">Search</button>
+                        @*<button name="clear" type="reset" class="btn btn-danger">Clear</button>*@
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a class="btn btn-success btn-md mb-1" asp-area="Branch" asp-controller="MST_Branch" asp-action="add">
+                Add New Branch
+            </a>
+        </h5>
+        <table class="table table-bordered table-responsive">
+            <thead class="table-dark">
+                <tr>
+                    <th>Branch Name</th>
+                    <th>Branch Code</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow data in dt.Rows)
+                    {
+                        <tr>
+                            <td>@data["BranchName"]</td>
+                            <td>@data["BranchCode"]</td>
+                            <td>
+                                <form method="post" asp-area="Branch" asp-controller="MST_Branch" asp-action="delete">
+                                    <input type="hidden" name="BranchID" value="@data["BranchID"]">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmDelete();">
+                                        Delete
+                                    </button>
+                                    <a class="btn btn-primary btn-sm" asp-area="Branch" asp-controller="MST_Branch" asp-action="add" asp-route-BranchID="@data["BranchID"]">
+                                        Edit
+                                    </a>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <th colspan="3" class="text-center">
+                            No Record Found.
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!-- End small tables -->
+
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        function confirmDelete() {
+            if (confirm("Are you sure you want to delete this Branch?")) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    </script>
+}
+
+

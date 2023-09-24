@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Add Edit State";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model MyProject.Areas.State.Models.LOC_StateModel
+
+<div class="container">
+    <form role="form" asp-area="State" asp-controller="LOC_State" asp-action="Save" method="post">
+        <h1>
+            State Add/Edit
+        </h1>
+        <hr />
+        @Html.HiddenFor(x=>x.StateID)
+        <div class="form-group">
+            <label for="CountryID">Country</label>
+            <div>
+                <select asp-for="CountryID" asp-items=@(new SelectList(ViewBag.CountryList,"CountryID","CountryName")) class="form-control custom-select">
+                    <option disabled selected>Select Country</option>
+                </select>
+                <span asp-validation-for="CountryID" class="form-text text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="StateName">State Name</label>
+            <input asp-for="StateName" placeholder="Enter State Name" type="text" class="form-control" aria-describedby="StateNameHelpBlock">
+            <span asp-validation-for="StateName" class="form-text text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="StateCode">State Code</label>
+            <input asp-for="StateCode" placeholder="Enter State Code" type="text" class="form-control">
+            <span asp-validation-for="StateCode" class="form-text text-danger"></span>
+        </div>
+        <hr />
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Save</button>
+            <a class="btn btn-danger" asp-area="State" asp-controller="LOC_State" asp-action="Index">
+                Cancel
+            </a>
+        </div>
+    </form>
+    @if (TempData["Message"] != "")
+    {
+        <span class="text-white bg-success fw-bold p-2">
+            @TempData["Message"]
+        </span>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("~/Views/Shared/_ValidationScriptsPartial.cshtml");
+    }
+}
+

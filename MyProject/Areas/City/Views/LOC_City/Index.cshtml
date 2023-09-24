@@ -1,0 +1,155 @@
+﻿@using System.Data;
+@{
+    ViewData["Title"] = "City List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataTable dt = ViewData["Table"] as DataTable;
+}
+
+@model MyProject.Areas.City.Models.LOC_CityModel
+
+<div class="card">
+    <div class="card-header">
+        <h3>
+            City List
+        </h3>
+    </div>
+    <div class="card-body">
+        <form asp-area="City" asp-controller="LOC_City" asp-action="Index" method="post">
+            <h6>
+                Apply Filter
+            </h6>
+            <div class="row">
+                <div class="col-3">
+                    <div class="form-group">
+                        <label class="text-muted fw-bold" for="CountryID">Select Country</label>
+                        <div>
+                            <select onchange="changeState(this.value);" asp-for="CountryID" asp-items=@(new SelectList(ViewBag.CountryList,"CountryID","CountryName")) class="form-control custom-select">
+                                <option value="0" selected>Select Country</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label class="text-muted fw-bold" for="StateID">Select State</label>
+                        <div>
+                            <select asp-for="StateID" asp-items=@(new SelectList(ViewBag.StateList,"StateID","StateName")) class="form-control custom-select">
+                                <option value="0" selected>Select State</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label class="text-muted fw-bold" for="CityName">City Name</label>
+                        <input asp-for="CityName" placeholder="Enter City Name" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label class="text-muted fw-bold" for="CityCode">City Code</label>
+                        <input asp-for="CityCode" placeholder="Enter City Code" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group pt-2">
+                        <button name="submit" type="submit" class="btn btn-primary">Search</button>
+                        @*<button name="clear" type="reset" class="btn btn-danger">Clear</button>*@
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a class="btn btn-success btn-md mb-1" asp-area="City" asp-controller="LOC_City" asp-action="add">
+                Add New City
+            </a>
+        </h5>
+        <table class="table table-bordered table-responsive">
+            <thead class="table-dark">
+                <tr>
+                    <th>City Name</th>
+                    <th>City Code</th>
+                    <th>State Name</th>
+                    <th>Country Name</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow data in dt.Rows)
+                    {
+                        <tr>
+                            <td>@data["CityName"]</td>
+                            <td>@data["CityCode"]</td>
+                            <td>@data["StateName"]</td>
+                            <td>@data["CountryName"]</td>
+                            <td>
+                                <form method="post" asp-area="City" asp-controller="LOC_City" asp-action="delete">
+                                    <input type="hidden" name="CityID" value="@data["CityID"]">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmDelete();">
+                                        Delete
+                                    </button>
+                                    <a class="btn btn-primary btn-sm" asp-area="City" asp-controller="LOC_City" asp-action="add" asp-route-CityID="@data["CityID"]">
+                                        Edit
+                                    </a>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <th colspan="5" class="text-center">
+                            No Record Found.
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!-- End small tables -->
+
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        function confirmDelete() {
+            if (confirm("Are you sure you want to delete this?")) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        function changeState(val) {
+            if (val !== null) {
+                $("#StateID").empty();
+                $("#StateID").append($("<option></option>").val("").html("Select State"));
+                $.ajax({
+                    url: "/City/LOC_City/CheckDropDown?CountryID=" + val,
+                    dataType: 'json',
+                    data: {},
+                    success: function (response) {
+                        $.each(response,
+                            function (key, value) {
+                                $("#StateID").append($("<option></option>").val(value.stateID).html(value.stateName));
+                            }
+                        );
+                    },
+                    error: function (err) {
+                        alert("error while Loading");
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+

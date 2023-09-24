@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Add Edit Country";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model MyProject.Areas.Country.Models.LOC_CountryModel
+
+<div class="container">
+    <form role="form" asp-controller="LOC_Country" asp-action="Save" method="post">
+        <h1>
+            Country Add/Edit
+        </h1>
+        <hr />
+        @Html.HiddenFor(x=>x.CountryID)
+        <div class="form-group">
+            <label for="CountryName">Country Name</label>
+            <input asp-for="CountryName" placeholder="Enter Country Name" type="text" class="form-control" aria-describedby="CountryNameHelpBlock">
+            <span asp-validation-for="CountryName" class="form-text text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="CountryCode">Country Code</label>
+            <input asp-for="CountryCode" placeholder="Enter Country Code" type="text" class="form-control">
+            <span asp-validation-for="CountryCode" class="form-text text-danger"></span>
+        </div>
+        <hr />
+        <div class="form-group">
+            @if (Context.Request.Path.ToString().Contains("edit"))
+            {
+                <button type="submit" class="btn btn-success">Edit</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-success">Add</button>
+            }
+            <a asp-area="Country" asp-controller="LOC_Country" asp-action="Index" class="btn btn-danger">Cancel</a>
+        </div>
+    </form>
+    @if(TempData["Message"] != "")
+    {
+        <span class="text-white bg-success fw-bold p-2">
+            @TempData["Message"]
+        </span>
+    } 
+    
+</div>
+
+@section Scripts {
+    @{
+    <partial name="_ValidationScriptsPartial"/>
+    }
+}
+
